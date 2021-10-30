@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostController!{% endblock %}
+
+{% block body %}
+
+        <li>Hello world</li>
+        <br>
+
+         <p>{{ posts.0.body }}</p>
+        <br>
+        <a href="{{ path('blog_post_edit', {'slug': posts.0.slug}) }}">редактировать</a>
+        <br>
+        <a href="{{ path('blog_post_delete', {'slug': posts.0.slug}) }}">Удалить</a>
+        <br>
+        <a href="{{ path('post') }}">назад</a>
+
+    {% if is_granted("ROLE_USER") %}
+        <div class="mb-3">
+            <h1>Комментарии</h1>
+            {% for comment in comments %}
+                <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                    {{ comment.email }}<br>
+                    {{ comment.comment | slice(0, 255) ~ '...'  }} {{ comment.createdAt|date("h:i:s d/m/Y") }}
+                </p>
+            {% endfor %}
+        </div>
+            <div>
+                <h2>Добавить комментарий</h2><br>
+                {{ form_start(form, {
+                'action': path('blog_show', {'slug': posts.0.slug}),
+                'method': 'POST'
+                }) }}
+
+                {{ form_widget(form.comment, {'attr':{ 'cols':'40'}}) }}
+                {{ form_widget(form.save) }}
+                {{ form_errors(form.comment) }}
+                {{ form_end(form) }}
+            </div>
+    {% endif %}
+
+{% endblock %}

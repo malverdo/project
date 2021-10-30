@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+     {% block stylesheets %}
+         <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+     {% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+{#    {{ form.title.vars.id }}#}
+{#    {{ form.title.vars.full_name }}#}
+
+        {{ form_label(form.title, '',{'label_attr':{ 'class':'suka'}}) }}
+    {{ form_widget(form.title) }}
+    {{ form_errors(form.title) }}
+    <br>
+    {{ form_label(form.body) }}:
+    {{ form_widget(form.body, {
+        'attr': {
+        'rows' : '10',
+        'cols' : '40',
+    }}) }}
+            <button class="btn btn-default" type="submit">Сохранить</button>
+    {{ form_errors(form.body) }}
+    {{ form_end(form) }}
+
+    {% for post in posts %}
+        <br>
+        <a href="/post">главная</a>
+        <br>
+        <a href="{{ path('blog_show', {'slug': post.slug}) }}">назад</a>
+    {% endfor %}
+
+{% endblock %}

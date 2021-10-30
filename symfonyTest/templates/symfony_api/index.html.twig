@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SymfonyApiController!{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+
+    {{ form_start(form, {
+        'action': path('symfony_api'),
+        'method': 'GET'
+    }) }}
+
+
+
+
+    {{ form_end(form) }}
+    <br>
+    {{ namber }}
+</div>
+{% endblock %}

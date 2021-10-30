@@ -1,0 +1,11 @@
+RApp\Entity\user:
+  type: entity
+  table: user
+  id:
+    type: integer
+    generator:
+      strategy: AUTO
+  name:
+    type: string
+  role:
+     type: int

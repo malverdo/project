@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostController!{% endblock %}
+    {% block stylesheets %}
+       <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+
+    {% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('build/js/app.js') }}"></script>
+    {% endblock %}
+{% block body %}
+
+    {% if is_granted("ROLE_NAGIBATOR") %}
+        <div class="mb-3">
+            ВЫ нагибатор
+        </div>
+    {% endif %}
+
+        <li>Hello world</li>
+        <br>
+
+        {% for post in posts %}
+            <a href="{{ path('blog_show', {'slug': post.slug}) }}">{{ post.title }}</a>
+            {{ post.CreatedAt|date("h:i:s d/m/Y") }}  //кол-во комментариев {{ post.count_comment }}<br>
+        {% endfor %}
+
+    <br>
+    <div class="navigation">
+        {{ knp_pagination_render(posts) }}
+        <br>
+        {{knp_pagination_sortable (posts, 'соритровать по дате', 'created_at', {}, {' direction ':' desc '})}}
+
+    </div>
+    <br>
+    <a href="{{ path('new_blog_post') }}">добавить</a>
+    <br>
+    <a href="{{ path('blog_search') }}">поиск</a>
+    <br>
+    <a href="{{ path('register') }}">regiser</a>
+
+{% endblock %}
