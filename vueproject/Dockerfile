@@ -22,7 +22,7 @@ RUN npm install
 COPY . .
 
 # собираем приложение для production с минификацией
-RUN npm run build
+#RUN npm run build
 
 EXPOSE 8080
 

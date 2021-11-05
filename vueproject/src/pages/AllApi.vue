@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <h1>MAINas41ss</h1>
+    <h1>HELLO WORLD1</h1>
     <form action="">
       <input type="text" v-model="one" name="one"><br><br>
       <input type="text" v-model="two" name="two"><br><br>
-      <button type="button" v-on:click="input(one,two)">расчитать </button>
+      <button type="button" v-on:click="input(one,two)">расasdadчитать aa</button>
     </form>
     {{result}}
   </div>

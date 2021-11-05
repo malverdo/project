@@ -2,32 +2,37 @@ version: '3'
 services:
     web:
         build:
-            context: ./docker
+            context: ./../../docker
             dockerfile: nginx.docker
         ports:
             - "80:80"
         volumes:
             # config nginx
-            - ./nginx/symfonyTest.conf:/etc/nginx/conf.d/symfonyTest.conf
-            - ./nginx/symfonyApi.conf:/etc/nginx/conf.d/symfonyApi.conf
+            - ./../../nginx/symfonyTest.conf:/etc/nginx/conf.d/symfonyTest.conf
+            - ./../../nginx/symfonyApi.conf:/etc/nginx/conf.d/symfonyApi.conf
+            - ./../../nginx/vue.conf:/etc/nginx/conf.d/vue.conf
             # передать папки
-            - ./../symfonyapi:/var/www/symfonyapi
-            - ./../symfonyTest:/var/www/symfonyTest
+            - ./../../../symfonyapi:/var/www/symfonyapi
+            - ./../../../symfonyTest:/var/www/symfonyTest
+            - ./../../../vueproject/dist:/var/www/vueproject
+        depends_on:
+            - php
     php:
         build:
-            context: ./docker
+            context: ./../../docker
             dockerfile: php-fpm.docker
         # должны совпадать с путями из nginx
         volumes:
-            - ./../symfonyTest:/var/www/symfonyTest
-            - ./../symfonyapi:/var/www/symfonyapi
+            - ./../../../symfonyTest:/var/www/symfonyTest
+            - ./../../../symfonyapi:/var/www/symfonyapi
+            - ./../../../vueproject/dist:/var/www/vueproject
         depends_on:
             - rabbit
 
          
     postgres:
         build:
-            context: ./docker
+            context: ./../../docker
             dockerfile: postgres.docker
 
         restart: always
@@ -37,8 +42,8 @@ services:
         ports: 
             - "54321:5432"
         volumes:
-            - ./db/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
-            - ./postgres-data:/var/lib/postgresql/data
+            - ./../../db/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+            - ./../../postgres-data:/var/lib/postgresql/data
 
     
     pgadmin-compose:
@@ -52,7 +57,7 @@ services:
             - postgres
     redis:
         build:
-            context: ./docker
+            context: ./../../docker
             dockerfile: redis.docker
         ports: 
             - "6379:6379"
@@ -64,3 +69,11 @@ services:
         environment:
             RABBITMQ_DEFAULT_USER: "guest"
             RABBITMQ_DEFAULT_PASS: "guest"
+    vue:
+        build:
+            context: ./../../../vueproject
+
+        ports:
+            - "8080:8080"
+        volumes:
+            - ./../../../vueproject:/app

@@ -16,15 +16,13 @@ class RedisController extends AbstractController
     public function index(): Response
     {
         phpinfo();
-
-
+exit();
         $client = new Client([
             'host'=>$_ENV['IP_DOCKER']
         ]);
         $client->setex('AYE',10,'vottak');
         $value = $client->get('AYE');
 
-        print_r($value);
         return $this->render('redis/index.html.twig', [
             'controller_name' => 'RedisController',
         ]);
