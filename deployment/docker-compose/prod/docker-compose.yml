@@ -26,6 +26,7 @@ services:
             - ./../../../symfonyTest:/var/www/symfonyTest
             - ./../../../symfonyapi:/var/www/symfonyapi
             - ./../../../vueproject/dist:/var/www/vueproject
+            - ./xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
         depends_on:
             - rabbit
 

@@ -15,8 +15,7 @@ class RedisController extends AbstractController
      */
     public function index(): Response
     {
-        phpinfo();
-exit();
+        $q = 0;
         $client = new Client([
             'host'=>$_ENV['IP_DOCKER']
         ]);
