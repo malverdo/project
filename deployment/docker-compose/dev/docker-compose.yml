@@ -2,8 +2,8 @@ version: '3'
 services:
     web:
         build:
-            context: /home/${HOMENAME}/project/deployment/docker/dev
-            dockerfile: nginx.docker
+            context: /home/${HOMENAME}/project/deployment/docker/dev/nginx
+            dockerfile: Dockerfile
         ports:
             - "80:80"
         volumes:
@@ -12,28 +12,36 @@ services:
             - /home/${HOMENAME}/project/deployment/nginx/symfonyApi.conf:/etc/nginx/conf.d/symfonyApi.conf
             - /home/${HOMENAME}/project/deployment/nginx/vue.conf:/etc/nginx/conf.d/vue.conf
             # передать папки
-            - /home/${HOMENAME}/project/symfonyapi:/var/www/symfonyapi
-            - /home/${HOMENAME}/project/symfonyTest:/var/www/symfonyTest
-            - /home/${HOMENAME}/project/vueproject/dist:/var/www/vueproject
+            - /home/${HOMENAME}/project/symfonyapi:/home/apps/symfonyapi
+            - /home/${HOMENAME}/project/symfonyTest:/home/apps/symfonyTest
+            - /home/${HOMENAME}/project/vueproject:/home/apps/vueproject
         depends_on:
-            - php
-    php:
+            - symfonyapi
+            - symfonytest
+    symfonyapi:
         build:
-            context: /home/${HOMENAME}/project/deployment/docker/dev
+            context: /home/${HOMENAME}/project/deployment/docker/dev/symfonyapi
             dockerfile: php-fpm.docker
         # должны совпадать с путями из nginx
         volumes:
-            - /home/${HOMENAME}/project/symfonyTest:/var/www/symfonyTest
-            - /home/${HOMENAME}/project/symfonyapi:/var/www/symfonyapi
-            - /home/${HOMENAME}/project/vueproject/dist:/var/www/vueproject
+            - /home/${HOMENAME}/project/symfonyapi:/home/apps/symfonyapi
+        depends_on:
+            - rabbit
+    symfonytest:
+        build:
+            context: /home/${HOMENAME}/project/deployment/docker/dev/symfonyTest
+            dockerfile: php-fpm.docker
+        # должны совпадать с путями из nginx
+        volumes:
+            - /home/${HOMENAME}/project/symfonyTest:/home/apps/symfonyTest
         depends_on:
             - rabbit
 
          
     postgres:
         build:
-            context: /home/${HOMENAME}/project/deployment/docker/dev
-            dockerfile: postgres.docker
+            context: /home/${HOMENAME}/project/deployment/docker/dev/postgres
+            dockerfile: Dockerfile
 
         restart: always
         environment:
@@ -42,27 +50,32 @@ services:
         ports: 
             - "54321:5432"
         volumes:
-            - ./../../db/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
-            - ./../../postgres-data:/var/lib/postgresql/data
+            - /home/${HOMENAME}/project/deployment/db/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+            - /home/${HOMENAME}/project/deployment/postgres-data:/var/lib/postgresql/data
 
     
     pgadmin-compose:
-        image: dpage/pgadmin4
+        build:
+            context: /home/${HOMENAME}/project/deployment/docker/dev/pgadmin
+            dockerfile: Dockerfile
         environment: 
             PGADMIN_DEFAULT_EMAIL: "test@mail.ru"
             PGADMIN_DEFAULT_PASSWORD: "test@mail.ru"
+        #id = 172.17.0.1
         ports: 
             - "16543:80"
         depends_on: 
             - postgres
     redis:
         build:
-            context: /home/${HOMENAME}/project/deployment/docker/dev
-            dockerfile: redis.docker
+            context: /home/${HOMENAME}/project/deployment/docker/dev/redis
+            dockerfile: Dockerfile
         ports: 
             - "6379:6379"
     rabbit:
-        image: rabbitmq:3.8-management
+        build:
+            context: /home/${HOMENAME}/project/deployment/docker/dev/rabbit
+            dockerfile: Dockerfile
         ports:
             - "5672:5672"
             - "15672:15672"
@@ -71,9 +84,10 @@ services:
             RABBITMQ_DEFAULT_PASS: "guest"
     vue:
         build:
-            context: ./../../../vueproject
+            context: /home/${HOMENAME}/project/vueproject
+            dockerfile: Dockerfile
 
         ports:
             - "8080:8080"
         volumes:
-            - ./../../../vueproject:/app
+            - /home/${HOMENAME}/project/vueproject:/home/apps
