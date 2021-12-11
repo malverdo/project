@@ -22,7 +22,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Form\CommentType;
 use DateTimeImmutable;
-
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class PostController extends AbstractController
 {
@@ -42,7 +43,7 @@ class PostController extends AbstractController
     /**
      * @Route("/post", name="post")
      */
-    public function index(PaginatorInterface $paginator, Request $request,EventDispatcherInterface $dispatcher): Response
+    public function index(PaginatorInterface $paginator, Request $request,EventDispatcherInterface $dispatcher): ?Response
     {
 //        $event = new PostNumberEvent();
 //        $listener = new PostListener();
@@ -51,6 +52,14 @@ class PostController extends AbstractController
 //                array($listener, 'onPostNumberAction'));
 //        $dispatcher->dispatch($event, PostNumberEvent::NAME);
 
+
+
+        $log = new Logger('name');
+        $log->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+
+
+        $log->warning('предупреждение ошибка', ['123','124123',['1'=>'2']]);
+        $log->error('фатальная ошибка');
 
         $posts = $this->postRepository->allPostCountComment();
 
