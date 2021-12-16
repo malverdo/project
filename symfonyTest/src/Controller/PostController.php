@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Exception\MissingException;
 use App\Form\SearchType;
 use App\Repository\CommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +27,7 @@ use DateTimeImmutable;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
+
 class PostController extends AbstractController
 {
 
@@ -43,7 +46,7 @@ class PostController extends AbstractController
     /**
      * @Route("/post", name="post")
      */
-    public function index(PaginatorInterface $paginator, Request $request,EventDispatcherInterface $dispatcher): ?Response
+    public function index(PaginatorInterface $paginator, Request $request, EventDispatcherInterface $dispatcher): ?Response
     {
 //        $event = new PostNumberEvent();
 //        $listener = new PostListener();
@@ -53,19 +56,27 @@ class PostController extends AbstractController
 //        $dispatcher->dispatch($event, PostNumberEvent::NAME);
 
 
-
         $log = new Logger('name');
-        $log->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+        $log->pushHandler(new StreamHandler('path/to/your.log', Logger::INFO));
 
-
-        $log->warning('предупреждение ошибка', ['123','124123',['1'=>'2']]);
+        $log->info('инфо');
+        $log->warning('предупреждение ошибка', ['123', '124123', ['1' => '2']]);
         $log->error('фатальная ошибка');
 
+
+        try {
+            $a = $this->sous('2');
+        } catch (MissingException $e) {
+            $b = $e->getError();
+            $c = $e->getMessage();
+            $log->warning('missing exception', [$b[0], $c, ['1' => '2']]);
+            dd($b,$c);
+        }
         $posts = $this->postRepository->allPostCountComment();
 
         $pagination = $paginator->paginate(
             $posts, /* query NOT result */
-            $request->query->getInt('page',1), /*page number*/
+            $request->query->getInt('page', 1), /*page number*/
             10 /*limit per page*/
         );
 
@@ -122,7 +133,7 @@ class PostController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()&& $form->isValid() ) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $query = $request->query->get('search');
             $posts = $this->postRepository->searchByQuery($query['title']);
 
@@ -171,9 +182,9 @@ class PostController extends AbstractController
             'method' => 'POST',
         ]);
         $form->handleRequest($request);
-        $post =  $this->postRepository->searchSlug($slug);
+        $post = $this->postRepository->searchSlug($slug);
 
-        if ($form->isSubmitted() && $form->isValid() ) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $comment->setUserid($this->getUser());
             $comment->setCreatedAt(new DateTimeImmutable());
@@ -191,7 +202,7 @@ class PostController extends AbstractController
         $this->CommentRepository->deliteCommentUser(23);
 
 
-        $comments =  $this->CommentRepository->findCommentUser($postNew->getId());
+        $comments = $this->CommentRepository->findCommentUser($postNew->getId());
         return $this->render('post/show.html.twig', [
             'form' => $form->createView(),
             'posts' => $post,
@@ -238,6 +249,17 @@ class PostController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('post');
+    }
+
+    /**
+     * @throws MissingException
+     */
+    private function sous(string $string): string
+    {
+        if ($string == '2'){
+            return 'null';
+        }
+        throw new MissingException(["Невозможно загрузить $string."]);
     }
 
 
