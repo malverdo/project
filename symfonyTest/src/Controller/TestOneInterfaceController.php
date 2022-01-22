@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use app\Service\Payment\TestOnePayment;
+use phpDocumentor\Reflection\Types\Null_;
+
+
 
 class TestOneInterfaceController extends AbstractController
 {
@@ -31,6 +34,7 @@ class TestOneInterfaceController extends AbstractController
     public function index(): Response
     {
 //        dd($this->PaymentInterface->paymentSum());
+        $a = new Null_();
 
         return $this->render('test_one_interface/index.html.twig', [
             'controller_name' => 'TestOneInterfaceController',

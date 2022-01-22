@@ -10,6 +10,7 @@ use App\Form\SearchType;
 use App\Repository\CommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Post;
@@ -89,7 +90,7 @@ class PostController extends AbstractController
     /**
      * @Route("/post/new", name="new_blog_post")
      */
-    public function addPost(Request $request, Slugify $slugify)
+    public function addPost(Request $request, Slugify $slugify): RedirectResponse|Response
     {
 
         $post = new Post();
